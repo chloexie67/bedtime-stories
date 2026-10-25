@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+# round-trip outputs and test recordings (may contain real voices)
+backend/out/
+*.webm
+*.wav
+!frontend/public/**/*.wav
+.DS_Store
