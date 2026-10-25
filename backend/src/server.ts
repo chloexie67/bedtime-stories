@@ -46,7 +46,8 @@ app.post("/identify", async (req, res) => {
 // ---------- Speak an APPROVED line in the cloned voice ----------
 // The client sends ids, never text, so the cloned voice can only say approved content.
 // Body (story):  { voiceId, storyId, line, relation? }  (relation: nainai | waipo | yeye | waigong | mama | baba)
-// Body (word):   { voiceId, wordId, part: "zh" | "en", wordOnly?, mode?: "warm" | "clear", speed? }
+// Body (word):   { voiceId, wordId, part: "zh" | "en" | "gn", wordOnly?, mode?: "warm" | "clear", speed? }
+//                (part "gn" = goodnight ritual line, e.g. "晚安，小熊。")
 // Streams NDJSON: {type:"meta"} {type:"audio",data} {type:"phonemes",...} {type:"words",...} {type:"done"}
 type Timing = { phonemes?: string[]; words?: string[]; start: number[]; end: number[] };
 type Cached = { pcm: Buffer[]; timings: Timing[] };
@@ -62,8 +63,12 @@ function resolveLine(b: Record<string, unknown>): TTSOpts & { error?: string } {
     return { voiceId, transcript: line.zh, language: "zh", emotion: line.emotion, speed: 0.9, words: true };
   }
   const word = getWord(String(b.wordId));
-  if (!word || (b.part !== "zh" && b.part !== "en")) return { voiceId, transcript: "", error: "unknown wordId/part" };
-  const opts: TTSOpts = { voiceId, language: b.part, words: true, transcript: "" };
+  if (!word || !["zh", "en", "gn"].includes(String(b.part))) {
+    return { voiceId, transcript: "", error: "unknown wordId/part" };
+  }
+  // "gn" = goodnight ritual: "晚安，小熊。" spoken softly
+  if (b.part === "gn") return { voiceId, transcript: word.gnLine, language: "zh", emotion: "calm", speed: 0.9, words: true };
+  const opts: TTSOpts = { voiceId, language: String(b.part), words: true, transcript: "" };
   if (b.part === "zh") opts.transcript = b.wordOnly ? word.zh : word.zhLine;
   else {
     opts.transcript = b.wordOnly ? word.en : word.enLine;

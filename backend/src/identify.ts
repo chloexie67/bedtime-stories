@@ -26,8 +26,9 @@ export async function identifyObject(jpegBase64: string): Promise<IdentifyResult
       model: MODEL,
       max_tokens: 200,
       system:
-        "You help a young child learn words. Look at the photo and decide which ONE object from the allowed list " +
-        "is the main thing being shown. Only pick an object if it is clearly visible and clearly that object. " +
+        "A young child is pointing a camera around their room at bedtime to say goodnight to things. " +
+        "Decide which ONE object from the allowed list is the main thing being shown. Rooms may be dim. " +
+        "Only pick an object if it is clearly visible and clearly that object. " +
         'If none of the allowed objects is clearly shown, or there are people\'s faces as the main subject, answer "none". ' +
         "Never guess. Allowed objects: " +
         VOCAB.map((v) => `${v.id} (${v.en})`).join(", "),

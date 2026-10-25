@@ -8,6 +8,8 @@ export interface Word {
   zh: string;
   pinyin: string;
   zhLine: string;
+  gnLine: string;
+  gnPinyin: string;
 }
 
 export interface StoryLine {
@@ -75,7 +77,7 @@ export async function makeMandarin(voiceId: string) {
 
 export type SpeakReq =
   | { voiceId: string; storyId: string; line: number; relation: Relation }
-  | { voiceId: string; wordId: string; part: "zh" | "en"; wordOnly?: boolean; speed?: number };
+  | { voiceId: string; wordId: string; part: "zh" | "en" | "gn"; wordOnly?: boolean; speed?: number };
 
 export type SpeakEvent =
   | { type: "meta"; sampleRate: number; transcript: string }

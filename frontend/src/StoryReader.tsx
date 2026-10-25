@@ -1,9 +1,10 @@
 // Bedtime story mode: reads an approved Mandarin story line by line in the cloned voice,
 // highlights each character as it's spoken, and stops at the end (nothing plays during sleep).
 import { useEffect, useRef, useState } from "react";
-import { type Relation, type Story } from "./api";
+import { type Relation, type Story, type Word } from "./api";
 import { player, StoppedError, wordRanges } from "./player";
 import { Teacher } from "./Teacher";
+import { GoodnightRoom, gnName } from "./GoodnightRoom";
 import type { Mouth } from "./phonemes";
 
 const PAUSE_MS = 700;
@@ -34,6 +35,8 @@ export function StoryReader({
   mouth: Mouth;
   onError: (msg: string) => void;
 }) {
+  const [phase, setPhase] = useState<"goodnight" | "stories">("goodnight");
+  const [said, setSaid] = useState<Word[]>([]);
   const [storyId, setStoryId] = useState<string | null>(null);
   const [lineIdx, setLineIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -92,6 +95,18 @@ export function StoryReader({
     player.stop();
   }
 
+  if (!story && phase === "goodnight") {
+    return (
+      <GoodnightRoom
+        voiceId={voiceId}
+        whoLabel={whoLabel}
+        mouth={mouth}
+        onError={onError}
+        onDone={(w) => (setSaid(w), setPhase("stories"))}
+      />
+    );
+  }
+
   if (!story) {
     return (
       <section className="night">
@@ -107,6 +122,9 @@ export function StoryReader({
             </button>
           ))}
         </div>
+        <button className="ghost" onClick={() => setPhase("goodnight")}>
+          🌙 Say goodnight to the room {said.length ? "again" : "first"}
+        </button>
         <p className="fineprint-night">
           Reading the same story a few nights in a row is fine — repetition is part of how little ones learn words.
         </p>
@@ -161,6 +179,14 @@ export function StoryReader({
         <div className="page">
           <div className="hanzi">晚安 🌙</div>
           <p className="muted-night">The end. The story stops here — nothing plays while your child sleeps.</p>
+          {said.length > 0 && (
+            <div className="hanzi gn-end" lang="zh">
+              {said.map((w) => w.emoji).join(" ")} {said.map(gnName).join("、")}也睡觉了
+              <div className="muted-night gn-end-en">
+                {said.map((w) => w.en).join(", ")} — all asleep too.
+              </div>
+            </div>
+          )}
           <div className="recap">
             <div className="recap-title">Tomorrow morning, ask: do you remember…?</div>
             {story.keyWords.map((k) => (

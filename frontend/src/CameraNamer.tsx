@@ -3,7 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import { identify, type Word } from "./api";
 
-export function CameraNamer({ onFound, busy }: { onFound: (w: Word) => void; busy: boolean }) {
+export function CameraNamer({
+  onFound,
+  busy,
+  label = "📷 What is this?",
+  notSure = "Hmm, Bao isn't sure. Try holding one object up close, with a plain background.",
+}: {
+  onFound: (w: Word) => void;
+  busy: boolean;
+  label?: string;
+  notSure?: string;
+}) {
   const video = useRef<HTMLVideoElement>(null);
   const [status, setStatus] = useState<"starting" | "ready" | "looking" | "error">("starting");
   const [msg, setMsg] = useState("");
@@ -41,7 +51,7 @@ export function CameraNamer({ onFound, busy }: { onFound: (w: Word) => void; bus
     try {
       const r = await identify(c.toDataURL("image/jpeg", 0.8));
       if (r.word) onFound(r.word);
-      else setMsg("Hmm, Bao isn't sure. Try holding one object up close, with a plain background.");
+      else setMsg(notSure);
     } catch (e) {
       setMsg(`Couldn't check the photo: ${(e as Error).message}`);
     }
@@ -52,9 +62,9 @@ export function CameraNamer({ onFound, busy }: { onFound: (w: Word) => void; bus
     <section className="camera">
       <video ref={video} autoPlay playsInline muted />
       <button className="big" onClick={look} disabled={status !== "ready" || busy}>
-        {status === "looking" ? "Looking…" : "📷 What is this?"}
+        {status === "looking" ? "Looking…" : label}
       </button>
-      {msg && <p className="muted">{msg}</p>}
+      {msg && <p className="camera-msg">{msg}</p>}
       <p className="fineprint">
         Photos are sent once to identify the object and aren't saved. Bao only names things from the approved word list.
       </p>

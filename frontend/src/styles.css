@@ -112,3 +112,17 @@ select { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border
 .recap-word { font-size: 1.3rem; border: 1px solid var(--n-line); border-radius: 12px; padding: 4px 10px; }
 .badge-night { align-self: center; font-size: 0.78rem; color: var(--n-muted); border: 1px solid var(--n-line); border-radius: 999px; padding: 3px 10px; }
 input[type="checkbox"] { min-width: 0; }
+
+/* ---------- goodnight-to-your-room ritual ---------- */
+.gn-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 800px) { .gn-layout { grid-template-columns: 1fr; } }
+.gn-camera video { border: 2px solid var(--n-line); background: #0d1222; }
+.gn-camera .fineprint { color: var(--n-muted); }
+.camera-msg { color: var(--n-hi, #8a7566); }
+.gn-side { display: flex; flex-direction: column; gap: 12px; }
+.gn-line { font-size: clamp(1.8rem, 4vw, 2.6rem); color: var(--n-hi); }
+.gn-said { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+.gn-end { font-size: 1.6rem; }
+.gn-end-en { font-size: 0.9rem; margin-top: 4px; }
+.center { text-align: center; }
+.night h2 { font-size: 1.3rem; }

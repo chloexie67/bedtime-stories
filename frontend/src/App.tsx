@@ -12,7 +12,6 @@ import {
 import { player, StoppedError } from "./player";
 import { mouthFor, type Mouth } from "./phonemes";
 import { Teacher } from "./Teacher";
-import { CameraNamer } from "./CameraNamer";
 import { StoryReader } from "./StoryReader";
 
 const read = (k: string, d = "") => {
@@ -30,7 +29,7 @@ const write = (k: string, v: string) => {
   }
 };
 
-type Tab = "story" | "camera" | "words";
+type Tab = "story" | "words";
 
 export default function App() {
   const [voiceId, setVoiceId] = useState(read("voiceId"));
@@ -162,9 +161,6 @@ export default function App() {
         <button className={tab === "story" ? "on" : ""} onClick={() => switchTab("story")}>
           🌙 Bedtime story
         </button>
-        <button className={tab === "camera" ? "on" : ""} onClick={() => switchTab("camera")}>
-          📷 Point &amp; name
-        </button>
         <button className={tab === "words" ? "on" : ""} onClick={() => switchTab("words")}>
           Words
         </button>
@@ -182,19 +178,15 @@ export default function App() {
       ) : (
         <main>
           <div className="left">
-            {tab === "camera" ? (
-              <CameraNamer onFound={teach} busy={busy} />
-            ) : (
-              <div className="grid">
-                {vocab.map((w) => (
-                  <button key={w.id} onClick={() => teach(w)} disabled={busy}>
-                    <span className="emoji">{w.emoji}</span>
-                    <span lang="zh">{w.zh}</span>
-                    <span className="muted">{w.pinyin}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="grid">
+              {vocab.map((w) => (
+                <button key={w.id} onClick={() => teach(w)} disabled={busy}>
+                  <span className="emoji">{w.emoji}</span>
+                  <span lang="zh">{w.zh}</span>
+                  <span className="muted">{w.pinyin}</span>
+                </button>
+              ))}
+            </div>
           </div>
           <div className="right">
             <Teacher mouth={mouth} speaking={busy} />
